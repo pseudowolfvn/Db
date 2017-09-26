@@ -2,11 +2,12 @@ package Db.Components;
 
 import Db.Types.DbType;
 
+import java.io.Serializable;
 import java.util.Set;
 
 enum ColumnFeature{Key, Required, Uniq, AutoIncrement};
 
-public class ColumnHeader {
+public class ColumnHeader implements Serializable {
     String type, name;
     // Set<ColumnFeature> features;
 

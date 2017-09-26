@@ -5,9 +5,10 @@ import Db.Exceptions.UnsupportedTypeException;
 import Db.Types.DbType;
 import Db.Types.DbTypesFactory;
 
+import java.io.*;
 import java.util.*;
 
-public class Table {
+public class Table implements Serializable{
     private String name;
 
     private Set<String> columnNames;
@@ -74,5 +75,36 @@ public class Table {
             view.add(rows.get(i).getStringView());
         }
         return view;
+    }
+
+    public void save(String path) throws IOException {
+        FileOutputStream fileOut =
+            new FileOutputStream(path);
+        ObjectOutputStream objOut =
+                new ObjectOutputStream(fileOut);
+        objOut.writeObject(this);
+        objOut.close();
+        fileOut.close();
+    }
+
+    public static Table load(String path) throws IOException, ClassNotFoundException {
+        FileInputStream fileIn =
+                new FileInputStream(path);
+        ObjectInputStream objIn =
+                new ObjectInputStream(fileIn);
+        Table table = (Table) objIn.readObject();
+        objIn.close();
+        fileIn.close();
+        return table;
+    }
+
+    public void printToStdout() {
+        List<List<String>> view = this.getStringView();
+        for (List<String> row : view) {
+            for (String data : row) {
+                System.out.print(data + " ");
+            }
+            System.out.println();
+        }
     }
 }

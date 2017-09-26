@@ -2,10 +2,11 @@ package Db.Components;
 
 import Db.Types.DbType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Row {
+public class Row implements Serializable {
     private List<DbType> data;
     public Row() {
         data = new ArrayList<>();

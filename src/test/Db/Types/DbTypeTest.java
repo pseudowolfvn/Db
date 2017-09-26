@@ -8,7 +8,7 @@ class DbTypeTest {
             Char ch = (Char) DbTypesFactory.dbTypeFromString("Char", "a");
             System.out.println(ch);
 
-            Int i = (Int) DbTypesFactory.dbTypeFromString("Int", "4a2");
+            Int i = (Int) DbTypesFactory.dbTypeFromString("Int", "42");
             System.out.println(i);
 
             IntIntv iIntv = (IntIntv) DbTypesFactory.dbTypeFromString("IntIntv", "0..10");

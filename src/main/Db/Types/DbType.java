@@ -1,6 +1,8 @@
 package Db.Types;
 
-public interface DbType<T> {
+import java.io.Serializable;
+
+public interface DbType<T> extends Serializable {
 
     void fromString(String str);
 
