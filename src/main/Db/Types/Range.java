@@ -5,6 +5,8 @@ public class Range<T> {
     private T left;
     private T right;
 
+    public Range() {}
+
     public Range(T l, T r) {
         left = l;
         right = r;

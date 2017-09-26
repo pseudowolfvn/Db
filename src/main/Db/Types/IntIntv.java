@@ -1,7 +1,11 @@
 package Db.Types;
 
 public class IntIntv implements DbType<Range<Integer>> {
-    Range<Integer> value;
+    private Range<Integer> value;
+
+    public IntIntv() {
+        value = new Range<>();
+    }
 
     public IntIntv(Integer l, Integer r) {
         value = new Range(l, r);
@@ -9,8 +13,9 @@ public class IntIntv implements DbType<Range<Integer>> {
 
     @Override
     public void fromString(String str) {
-        String left = str.substring(0, str.indexOf('.'));
-        String right = str.substring(str.lastIndexOf('.'));
+        String sep = "..";
+        String left = str.substring(0, str.indexOf(sep));
+        String right = str.substring(str.indexOf(sep) + sep.length());
         value.setLeft(Integer.parseInt(left));
         value.setRight(Integer.parseInt(right));
     }
@@ -26,7 +31,7 @@ public class IntIntv implements DbType<Range<Integer>> {
     }
 
     @Override
-    public Range<Integer>get() {
+    public Range<Integer> get() {
         return value;
     }
 }

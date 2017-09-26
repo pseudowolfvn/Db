@@ -2,7 +2,11 @@ package Db.Types;
 
 public class RealIntv implements DbType<Range<Double>> {
 
-    Range<Double> value;
+    private Range<Double> value;
+
+    public RealIntv() {
+        value = new Range<>();
+    }
 
     public RealIntv(Double l, Double r) {
         value = new Range<Double>(l, r);
@@ -20,8 +24,9 @@ public class RealIntv implements DbType<Range<Double>> {
 
     @Override
     public void fromString(String str) {
-        String left = str.substring(0, str.indexOf('.'));
-        String right = str.substring(str.lastIndexOf('.'));
+        String sep = "..";
+        String left = str.substring(0, str.indexOf(sep));
+        String right = str.substring(str.indexOf(sep) + sep.length());
         value.setLeft(Double.parseDouble(left));
         value.setRight(Double.parseDouble(right));
     }

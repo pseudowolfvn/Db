@@ -1,7 +1,9 @@
 package Db.Types;
 
 public class Char implements DbType<Character> {
-    Character value;
+    private Character value;
+
+    public Char() {}
 
     public Char(Character val) {
         value = val;

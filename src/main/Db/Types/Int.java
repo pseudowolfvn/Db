@@ -1,7 +1,9 @@
 package Db.Types;
 
 public class Int implements DbType<Integer> {
-    Integer value;
+    private Integer value;
+
+    public Int() {}
 
     public Int(Integer val) {
         value = val;
@@ -9,7 +11,7 @@ public class Int implements DbType<Integer> {
 
     @Override
     public void fromString(String str) {
-        value = Integer.getInteger(str);
+        value = Integer.parseInt(str);
     }
 
     public String toString() {
