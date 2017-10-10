@@ -23,6 +23,10 @@ public class Table implements Serializable{
         rows = new ArrayList<>();
     }
 
+    public String getName() {
+        return name;
+    }
+
     public boolean insertRow(String ... data) throws IllegalConversionException, UnsupportedTypeException {
         if (data.length != columns.size())
             return false;
@@ -58,7 +62,7 @@ public class Table implements Serializable{
 
     public void deleteColumn(String name) {
         for (int i = 0; i < columns.size(); ++i)
-            if (columns.get(i).getName() == name)
+            if (Objects.equals(columns.get(i).getName(), name))
             {
                 this.deleteColumn(i);
                 return;
@@ -69,7 +73,7 @@ public class Table implements Serializable{
         List<List<String>> view = new LinkedList<>();
         view.add(new ArrayList<>());
         for (int i = 0; i < columns.size(); ++i) {
-            view.get(0).add(columns.get(i).getName());
+            view.get(0).add(columns.get(i).toString());
         }
         for (int i = 0; i < rows.size(); ++i) {
             view.add(rows.get(i).getStringView());

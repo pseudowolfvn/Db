@@ -24,6 +24,9 @@ public class ColumnHeader implements Serializable {
         return name;
     }
 
+    public String toString() {
+        return name + "(" + type + ")";
+    }
 //    public boolean findFeature(ColumnFeature val) {
 //        if (features.contains(val))
 //            return true;
