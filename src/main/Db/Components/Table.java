@@ -23,6 +23,17 @@ public class Table implements Serializable{
         rows = new ArrayList<>();
     }
 
+    public List<Row> getRows() {
+        return rows;
+    }
+
+    public List<List<DbType>> getData() {
+        List<List<DbType>> data = new ArrayList<>();
+        for (Row row: rows)
+            data.add(row.getData());
+        return data;
+    }
+
     public String getName() {
         return name;
     }

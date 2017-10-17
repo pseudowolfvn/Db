@@ -14,6 +14,7 @@ public class Int implements DbType<Integer> {
         value = Integer.parseInt(str);
     }
 
+    @Override
     public String toString() {
         return Integer.toString(value);
     }

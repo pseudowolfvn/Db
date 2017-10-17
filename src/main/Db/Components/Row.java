@@ -20,6 +20,10 @@ public class Row implements Serializable {
         data.remove(dataInd);
     }
 
+    public List<DbType> getData() {
+        return data;
+    }
+
     public List<String> getStringView() {
         List<String> view = new ArrayList<>();
         for (int i = 0; i < data.size(); ++i)
