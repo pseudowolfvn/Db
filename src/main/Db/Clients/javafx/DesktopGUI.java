@@ -19,16 +19,17 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javax.xml.crypto.Data;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
 
 public class DesktopGUI extends Application {
 
@@ -44,8 +45,8 @@ public class DesktopGUI extends Application {
         ObservableList<String> items = FXCollections.observableArrayList (
                 DatabaseManager.getDatabaseNames()
         );
-        names.setItems(items);
 
+        names.setItems(items);
 
         names.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -55,7 +56,7 @@ public class DesktopGUI extends Application {
             }
         });
 
-        Button addDatabase = new Button("+");
+        Button addDatabase = new Button("Add");
         addDatabase.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -69,7 +70,7 @@ public class DesktopGUI extends Application {
             }
         });
 
-        Button deleteDatabase = new Button("-");
+        Button deleteDatabase = new Button("Remove");
         deleteDatabase.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -89,8 +90,36 @@ public class DesktopGUI extends Application {
             }
         });
 
+        Button renameDatabase = new Button("Rename");
+        renameDatabase.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                List<String> selectedItems = names.getSelectionModel().getSelectedItems();
+                Map<String, String> renameNames = new HashMap<>();
+                for (String item: selectedItems) {
+                    TextInputDialog dialog = new TextInputDialog(item);
+                    dialog.setTitle("Enter new name for the database");
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        try {
+                            DatabaseManager.renameDatabase(item, result.get());
+                            renameNames.put(item, result.get());
+                        } catch (IOException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                }
+                List<String> items = names.getItems();
+                for (int i = 0; i < items.size(); ++i)
+                    if (renameNames.containsKey(items.get(i)))
+                        items.set(i, renameNames.get(items.get(i)));
+            }
+        });
+
         VBox root = new VBox();
-        root.getChildren().addAll(names, addDatabase, deleteDatabase);
+        HBox buttons = new HBox();
+        buttons.getChildren().addAll(addDatabase, deleteDatabase, renameDatabase);
+        root.getChildren().addAll(names, buttons);
 
         Scene scene = new Scene(root, 300, 250);
 
