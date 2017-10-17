@@ -38,6 +38,8 @@ public class Table implements Serializable{
         return name;
     }
 
+    public void setName(String name) { this.name = name; }
+
     public boolean insertRow(String ... data) throws IllegalConversionException, UnsupportedTypeException {
         if (data.length != columns.size())
             return false;

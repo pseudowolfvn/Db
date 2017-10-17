@@ -64,13 +64,19 @@ public class DesktopGUI extends Application {
                 dialog.setTitle("Enter name of the new database");
                 Optional<String> result = dialog.showAndWait();
                 if (result.isPresent()) {
-                    db = new Database(DB_PATH, result.get());
-                    names.getItems().add(result.get());
+                    try {
+                        db = new Database(DB_PATH, result.get());
+                        db.save();
+                        names.getItems().add(result.get());
+                    }
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
                 }
             }
         });
 
-        Button deleteDatabase = new Button("Remove");
+        Button deleteDatabase = new Button("Delete");
         deleteDatabase.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -141,12 +147,71 @@ public class DesktopGUI extends Application {
         names.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                showTable(primaryStage, db, names.getSelectionModel().getSelectedItem());
+                if (event.getClickCount() == 2)
+                    showTable(primaryStage, db, names.getSelectionModel().getSelectedItem());
             }
         });
 
-        StackPane root = new StackPane();
-        root.getChildren().add(names);
+        Button addTable = new Button("Add");
+        addTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                TextInputDialog dialog = new TextInputDialog("table_name");
+                dialog.setTitle("Enter name of the new table");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    db.addTable(result.get());
+                    names.getItems().add(result.get());
+                }
+            }
+        });
+
+        Button deleteTable = new Button("Delete");
+        deleteTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                List<String> items = names.getSelectionModel().getSelectedItems();
+                List<String> removeNames = new ArrayList<>();
+                for (String item: items) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setContentText("Are you sure you want to delete " + item + "?");
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK) {
+                        db.deleteTable(item);
+                        removeNames.add(item);
+                    }
+                }
+                names.getItems().removeAll(removeNames);
+            }
+        });
+
+        Button renameTable = new Button("Rename");
+        renameTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                List<String> selectedItems = names.getSelectionModel().getSelectedItems();
+                Map<String, String> renameNames = new HashMap<>();
+                for (String item: selectedItems) {
+                    TextInputDialog dialog = new TextInputDialog(item);
+                    dialog.setTitle("Enter new name for the table");
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        db.renameTable(item, result.get());
+                        renameNames.put(item, result.get());
+                    }
+                }
+                List<String> items = names.getItems();
+                for (int i = 0; i < items.size(); ++i)
+                    if (renameNames.containsKey(items.get(i)))
+                        items.set(i, renameNames.get(items.get(i)));
+            }
+        });
+
+        VBox root = new VBox();
+        HBox buttons = new HBox();
+        buttons.getChildren().addAll(addTable, deleteTable, renameTable);
+        root.getChildren().addAll(names, buttons);
 
         Scene scene = new Scene(root, 300, 250);
 

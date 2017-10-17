@@ -43,6 +43,27 @@ public class Database implements Serializable {
         return null;
     }
 
+    public void renameTable(String oldName, String newName) {
+        if (!tableNames.contains(oldName)) return;
+        for (int i = 0; i < dataBase.size(); ++i)
+            if (Objects.equals(dataBase.get(i).getName(), oldName)) {
+                dataBase.get(i).setName(newName);
+                tableNames.remove(oldName);
+                tableNames.add(newName);
+                return;
+            }
+    }
+
+    public void deleteTable(String name) {
+        if (!tableNames.contains(name)) return;
+        for (int i = 0; i < dataBase.size(); ++i)
+            if (Objects.equals(dataBase.get(i).getName(), name)) {
+                dataBase.remove(i);
+                tableNames.remove(name);
+                return;
+            }
+    }
+
     public void save() throws IOException {
         FileOutputStream fileOut =
                 new FileOutputStream(path + "/" + name + ".db");
