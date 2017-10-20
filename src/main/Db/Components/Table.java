@@ -27,6 +27,8 @@ public class Table implements Serializable{
         return rows;
     }
 
+    public List<ColumnHeader> getColumns() { return columns; }
+
     public List<List<DbType>> getData() {
         List<List<DbType>> data = new ArrayList<>();
         for (Row row: rows)
@@ -40,9 +42,9 @@ public class Table implements Serializable{
 
     public void setName(String name) { this.name = name; }
 
-    public boolean insertRow(String ... data) throws IllegalConversionException, UnsupportedTypeException {
+    public Row insertRow(String ... data) throws IllegalConversionException, UnsupportedTypeException {
         if (data.length != columns.size())
-            return false;
+            return null;
         Row row = new Row();
         for (int i = 0; i < data.length; ++i) {
             DbType value = DbTypesFactory
@@ -50,7 +52,7 @@ public class Table implements Serializable{
             row.insertData(value);
         }
         rows.add(row);
-        return true;
+        return row;
     }
 
     public boolean addColumn(String name, String type) {
@@ -58,6 +60,15 @@ public class Table implements Serializable{
             return false;
         columns.add(new ColumnHeader(name, type));
         columnNames.add(name);
+        for (int i = 0; i < rows.size(); ++i) {
+            try {
+                rows.get(i).insertData(DbTypesFactory
+                        .dbTypeFromString(type, " "));
+            }
+            catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
         return true;
     }
 
@@ -80,6 +91,13 @@ public class Table implements Serializable{
                 this.deleteColumn(i);
                 return;
             }
+    }
+
+    public ColumnHeader getColumn(String name) {
+        for (int i = 0; i < columns.size(); ++i)
+            if (Objects.equals(columns.get(i).getName(), name))
+                return columns.get(i);
+        return null;
     }
 
     public List<List<String>> getStringView() {

@@ -6,6 +6,9 @@ import Db.Exceptions.UnsupportedTypeException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class DbTypesFactory {
 
@@ -27,4 +30,9 @@ public class DbTypesFactory {
         }
         return value;
     }
+
+    public static List<String> supportedTypeNames() {
+        return Arrays.asList("Char", "Int", "IntIntv", "RealIntv");
+    }
+
 }

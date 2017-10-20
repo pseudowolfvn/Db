@@ -1,9 +1,6 @@
 package Db.Clients.javafx;
 
-import Db.Components.Database;
-import Db.Components.DatabaseManager;
-import Db.Components.Row;
-import Db.Components.Table;
+import Db.Components.*;
 import Db.Types.DbType;
 import javafx.application.Application;
 import javafx.beans.InvalidationListener;
@@ -60,7 +57,7 @@ public class DesktopGUI extends Application {
         addDatabase.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                TextInputDialog dialog = new TextInputDialog("database name");
+                TextInputDialog dialog = new TextInputDialog("database_name");
                 dialog.setTitle("Enter name of the new database");
                 Optional<String> result = dialog.showAndWait();
                 if (result.isPresent()) {
@@ -220,35 +217,83 @@ public class DesktopGUI extends Application {
         primaryStage.show();
     }
 
+    private void addNewColumn(TableView tableView, String columnName, String typeName) {
+        this.addNewColumn(tableView, columnName, typeName, tableView.getColumns().size());
+    }
+
+    private void addNewColumn(TableView tableView, String columnName, String typeName, final int index) {
+        TableColumn<Row, DbType> column = new TableColumn(columnName);
+        column.setEditable(true);
+        column.setCellValueFactory((val)->{
+            Row row = val.getValue();
+            List<DbType> data = row.getData();
+            return new SimpleObjectProperty<DbType>(data != null && data.size() > index ? data.get(index) : null) {
+            };
+        });
+        column.setCellFactory(TextFieldTableCell
+                .forTableColumn(
+                        DbTypeStringConverterFactory.stringConverterFromType(typeName)));
+        column.setOnEditCommit((val)->{
+            Row row = val.getRowValue();
+            List<DbType> data = row.getData();
+            data.get(val.getTablePosition().getColumn()).fromString(val.getNewValue().toString());
+        });
+        tableView.getColumns().add(column);
+    }
+
     public void showTable(Stage primaryStage, Database db, String tableName) {
         TableView tableView = new TableView();
         tableView.setEditable(true);
         Table table = db.getTable(tableName);
-        List<List<String>> stringView = table.getStringView();
-        for (int i = 0; i < stringView.get(0).size(); ++i) {
-            String columnName = stringView.get(0).get(i);
-            TableColumn<Row, DbType> column = new TableColumn(columnName);
-            final int index = i;
-            column.setEditable(true);
-            column.setCellValueFactory((val)->{
-                Row row = val.getValue();
-                List<DbType> data = row.getData();
-                return new SimpleObjectProperty<DbType>(data != null && data.size() > index ? data.get(index) : null) {
-                };
-            });
-            column.setCellFactory(TextFieldTableCell.forTableColumn(DbTypeStringConverterFactory.stringConverterFromType("Int")));
-            column.setOnEditCommit((val)->{
-                Row row = val.getRowValue();
-                List<DbType> data = row.getData();
-                data.get(val.getTablePosition().getColumn()).fromString(val.getNewValue().toString());
-            });
-            tableView.getColumns().add(column);
+        List<ColumnHeader> tableColumns = table.getColumns();
+        for (int i = 0; i < tableColumns.size(); ++i) {
+            String columnName = tableColumns.get(i).toString();
+            String typeName = tableColumns.get(i).getType();
+            this.addNewColumn(tableView, columnName, typeName, i);
+
         }
         ObservableList<Row> rowsView = FXCollections.observableArrayList(table.getRows());
 
+        Button addColumn = new Button("Add column");
+        addColumn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ColumnHeaderDialog dialog = new ColumnHeaderDialog();
+                dialog.showAndWait();
+                if (dialog.nameResult.isPresent()
+                        && dialog.typeResult.isPresent()) {
+                    String columnName = dialog.nameResult.get();
+                    String columnType = dialog.typeResult.get();
+                    table.addColumn(columnName, columnType);
+                    addNewColumn(tableView, table.getColumn(columnName).toString(), columnType);
+                }
+
+            }
+        });
+
+        Button addRow = new Button("Add row");
+        addRow.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                AddRowDialog dialog = new AddRowDialog(table.getColumns());
+                dialog.showAndWait();
+                try {
+                    Row insertedRow = table.insertRow(dialog.dataResult.toArray(new String[0]));
+                    tableView.getItems().add(insertedRow);
+                }
+                catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+
+            }
+        });
+
         tableView.setItems(rowsView);
-        StackPane root = new StackPane();
-        root.getChildren().add(tableView);
+
+        VBox root = new VBox();
+        HBox buttons = new HBox();
+        buttons.getChildren().addAll(addColumn, addRow);
+        root.getChildren().addAll(tableView, buttons);
 
         Scene scene = new Scene(root, 300, 250);
 

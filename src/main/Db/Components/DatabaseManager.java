@@ -35,6 +35,22 @@ public class DatabaseManager {
         return db;
     }
 
+    public static boolean isExists(String name) {
+        List<String> names = new ArrayList<>();
+
+        File[] files = new File(path).listFiles();
+        for (File file : files) {
+            if (file.isFile()) {
+                String[] filenameTokens = file.getName().split("\\.(?=[^\\.]+$)");
+                System.out.println(filenameTokens[0]);
+                if (filenameTokens[1].equalsIgnoreCase("db")
+                        && filenameTokens[0].equalsIgnoreCase(name))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public static void deleteDatabase(String name) {
         List<String> names = new ArrayList<>();
 

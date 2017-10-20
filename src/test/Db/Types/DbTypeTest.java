@@ -1,34 +1,42 @@
 package Db.Types;
 
+import Db.Exceptions.IllegalConversionException;
+import Db.Exceptions.UnsupportedTypeException;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 class DbTypeTest {
-    public static void factoryTest() {
+    @Test
+    public void factoryTest() {
         try {
             Char ch = (Char) DbTypesFactory.dbTypeFromString("Char", "a");
-            System.out.println(ch);
+            assertEquals((char)ch.get(), 'a');
 
             Int i = (Int) DbTypesFactory.dbTypeFromString("Int", "42");
-            System.out.println(i);
+            assertEquals((int)i.get(), 42);
 
             IntIntv iIntv = (IntIntv) DbTypesFactory.dbTypeFromString("IntIntv", "0..10");
-            System.out.println(iIntv);
+            assertEquals((int)iIntv.get().getLeft(), 0);
+            assertEquals((int)iIntv.get().getRight(), 10);
 
             RealIntv rIntv = (RealIntv) DbTypesFactory.dbTypeFromString("RealIntv", "0.42..3.1415");
-            System.out.println(rIntv);
+            assertEquals((double)rIntv.get().getLeft(), 0.42);
+            assertEquals((double)rIntv.get().getRight(), 3.1415);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static void typesTest() {
-        ArrayList<DbType> headers = new ArrayList<>();
-        headers.add(new Int(42));
-        headers.add(new Char('a'));
-        System.out.println(headers.get(1).get());
-    }
-
-    public static void main(String[] args) {
-        factoryTest();
+    @Test
+    public void typesSafety() {
+        assertThrows(IllegalConversionException.class, ()->{
+            Int i = (Int) DbTypesFactory.dbTypeFromString("Int", "bad_int");
+        });
+        assertThrows(UnsupportedTypeException.class, ()->{
+            Object obj = (Object) DbTypesFactory.dbTypeFromString("Double", "0.42");
+        });
     }
 }
