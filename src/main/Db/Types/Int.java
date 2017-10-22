@@ -1,5 +1,7 @@
 package Db.Types;
 
+import java.security.spec.ECField;
+
 public class Int implements DbType<Integer> {
     private Integer value;
 
@@ -11,7 +13,12 @@ public class Int implements DbType<Integer> {
 
     @Override
     public void fromString(String str) {
-        value = Integer.parseInt(str);
+        try {
+            value = Integer.parseInt(str);
+        }
+        catch (Exception ex) {
+            value = 0;
+        }
     }
 
     @Override

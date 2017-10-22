@@ -13,11 +13,23 @@ public class IntIntv implements DbType<Range<Integer>> {
 
     @Override
     public void fromString(String str) {
-        String sep = "..";
-        String left = str.substring(0, str.indexOf(sep));
-        String right = str.substring(str.indexOf(sep) + sep.length());
-        value.setLeft(Integer.parseInt(left));
-        value.setRight(Integer.parseInt(right));
+        try {
+            String sep = "..";
+            int leftEnd = str.indexOf(sep) - 1;
+            while (Character.isWhitespace(str.charAt(leftEnd)))
+                --leftEnd;
+            String left = str.substring(0, leftEnd + 1);
+            int rightStart = str.indexOf(sep) + sep.length();
+            while (Character.isWhitespace(str.charAt(rightStart)))
+                ++rightStart;
+            String right = str.substring(rightStart);
+            value.setLeft(Integer.parseInt(left));
+            value.setRight(Integer.parseInt(right));
+        }
+        catch (Exception ex) {
+            value.setLeft(0);
+            value.setRight(0);
+        }
     }
 
     @Override

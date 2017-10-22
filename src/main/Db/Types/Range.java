@@ -1,6 +1,8 @@
 package Db.Types;
 
-public class Range<T> {
+import java.io.Serializable;
+
+public class Range<T> implements Serializable {
 
     private T left;
     private T right;

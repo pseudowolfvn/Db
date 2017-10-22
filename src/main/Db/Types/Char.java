@@ -11,7 +11,12 @@ public class Char implements DbType<Character> {
 
     @Override
     public void fromString(String str) {
-        value = str.charAt(0);
+        try {
+            value = str.charAt(0);
+        }
+        catch (Exception ex) {
+            value = ' ';
+        }
     }
 
     @Override

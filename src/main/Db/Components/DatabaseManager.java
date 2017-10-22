@@ -8,6 +8,13 @@ import java.util.List;
 
 public class DatabaseManager {
     static String path = "./out/db";
+
+    public static Database createDatabase(String name) throws IOException {
+        Database db = new Database(path, name);
+        db.save();
+        return db;
+    }
+
     public static List<String> getDatabaseNames() {
         List<String> names = new ArrayList<>();
 

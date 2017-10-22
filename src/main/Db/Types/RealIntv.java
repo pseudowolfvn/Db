@@ -24,11 +24,17 @@ public class RealIntv implements DbType<Range<Double>> {
 
     @Override
     public void fromString(String str) {
-        String sep = "..";
-        String left = str.substring(0, str.indexOf(sep));
-        String right = str.substring(str.indexOf(sep) + sep.length());
-        value.setLeft(Double.parseDouble(left));
-        value.setRight(Double.parseDouble(right));
+        try {
+            String sep = "..";
+            String left = str.substring(0, str.indexOf(sep));
+            String right = str.substring(str.indexOf(sep) + sep.length());
+            value.setLeft(Double.parseDouble(left));
+            value.setRight(Double.parseDouble(right));
+        }
+        catch (Exception ex) {
+            value.setLeft(0.0);
+            value.setRight(0.0);
+        }
     }
 
     @Override
