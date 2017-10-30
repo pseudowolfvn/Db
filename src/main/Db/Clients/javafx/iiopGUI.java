@@ -4,6 +4,7 @@ import Db.Components.ColumnHeader;
 import Db.Components.Database;
 import Db.Components.Row;
 import Db.Components.Table;
+import Db.Components.rmi.iiop.server.DatabaseManagerImpl;
 import Db.Components.rmi.jrmp.interfaces.DatabaseManager;
 import Db.Types.DbType;
 import javafx.application.Application;
@@ -19,6 +20,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.rmi.PortableRemoteObject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -26,7 +31,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
 
-public class rmiGUI extends Application {
+public class iiopGUI extends Application {
     private DatabaseManager databaseManager;
     private Database db;
 
@@ -34,12 +39,10 @@ public class rmiGUI extends Application {
         launch(args);
     }
 
-    private void initClient() throws RemoteException, NotBoundException, MalformedURLException {
-        String rmiRegistryIp = "127.0.0.1";
-        String rmiRegistryPort = "1099";
-
-        databaseManager = (DatabaseManager)
-                Naming.lookup("rmi://" + rmiRegistryIp + ":" + rmiRegistryPort + "/databaseManager");
+    private void initClient() throws RemoteException, NotBoundException, MalformedURLException, NamingException {
+        Context context = new InitialContext();
+        Object objref = context.lookup("databaseManager");
+        databaseManager = (DatabaseManager) PortableRemoteObject.narrow(objref, DatabaseManager.class);
     }
 
     public void showDatabaseNames(Stage primaryStage) throws RemoteException {
@@ -236,7 +239,7 @@ public class rmiGUI extends Application {
     private void addNewColumn(TableView tableView, String columnName, String typeName, final int index) {
         TableColumn<Row, DbType> column = new TableColumn(columnName);
         column.setEditable(true);
-        column.setCellValueFactory((val)->{
+        column.setCellValueFactory((val) -> {
             Row row = val.getValue();
             List<DbType> data = row.getData();
             return new SimpleObjectProperty<DbType>(data != null && data.size() > index ? data.get(index) : null) {
@@ -245,7 +248,7 @@ public class rmiGUI extends Application {
         column.setCellFactory(TextFieldTableCell
                 .forTableColumn(
                         DbTypeStringConverterFactory.stringConverterFromType(typeName)));
-        column.setOnEditCommit((val)->{
+        column.setOnEditCommit((val) -> {
             Row row = val.getRowValue();
             List<DbType> data = row.getData();
             // data.get(val.getTablePosition().getColumn()).fromString(val.getNewValue().toString());
