@@ -1,0 +1,70 @@
+module Db {
+    module Components {
+        module corba {
+            interface Database;
+            interface Table;
+
+            struct ColumnHeader {
+                string type;
+                string name;
+                string title;
+            };
+
+            struct DbType {
+                string type;
+                string value;
+            };
+
+            typedef sequence<DbType> Row;
+            typedef sequence<string> ListString;
+            typedef sequence<ColumnHeader> ListColumnHeader;
+            typedef sequence<Row> ListRow;
+            typedef sequence<DbType> ListDbType;
+
+            interface DatabaseManager {
+                string createDatabase(in string name);
+                ListString getDatabaseNames();
+                string getDatabase(in string name);
+                boolean isExists(in string name);
+                void deleteDatabase(in string name);
+                void renameDatabase(in string oldName, in string newName);
+            };
+
+            interface Database {
+                boolean addTable(in string name);
+                ListString getTableNames();
+                string getName();
+                string getTable(in string name);
+                void renameTable(in string oldName, in string newName);
+                void deleteTable(in string name);
+            };
+
+            interface Table {
+                ListRow getRows();
+                ListColumnHeader getColumns();
+                string getName();
+                void setName(in string name);
+                Row insertRow(in ListString data);
+                boolean addColumn(in string name, in string type);
+                ColumnHeader getColumn(in string name);
+            };
+
+            interface ColumnHeader {
+                string getType();
+                string getName();
+                string toString();
+            };
+
+            interface Row {
+                void insertData(in string value, in string type);
+                void deleteData(in long dataInd);
+                ListDbType getData();
+            };
+
+            interface DbType {
+                void fromString(in string str);
+                string toString();
+            };
+        };
+    };
+};

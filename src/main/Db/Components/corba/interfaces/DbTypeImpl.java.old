@@ -1,0 +1,22 @@
+package Db.Components.corba.interfaces;
+
+import Db.Components.corba.DbTypePOA;
+import Db.Types.DbType;
+
+public class DbTypeImpl extends DbTypePOA {
+    DbType value;
+
+    DbTypeImpl(DbType _value) {
+        this.value = _value;
+    }
+
+    @Override
+    public void fromString(String str) {
+        value.fromString(str);
+    }
+
+    @Override
+    public String _toString() {
+        return value.toString();
+    }
+}

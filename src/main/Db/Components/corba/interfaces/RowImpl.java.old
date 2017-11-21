@@ -1,0 +1,42 @@
+package Db.Components.corba.interfaces;
+
+import Db.Components.Row;
+import Db.Components.corba.DbType;
+import Db.Components.corba.RowPOA;
+import Db.Exceptions.IllegalConversionException;
+import Db.Exceptions.UnsupportedTypeException;
+import Db.Types.DbTypesFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class RowImpl extends RowPOA {
+    Row row;
+
+    RowImpl(Row _row) {
+        this.row = _row;
+    }
+
+    @Override
+    public void insertData(String value, String type) {
+        try {
+            row.insertData(DbTypesFactory.dbTypeFromString(type, value));
+        } catch (UnsupportedTypeException | IllegalConversionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteData(int dataInd) {
+        row.deleteData(dataInd);
+    }
+
+    @Override
+    public DbType[] getData() {
+        List<Db.Types.DbType> data = row.getData();
+        List<DbTypeImpl> dataImpl = new ArrayList<>();
+        for (int i = 0; i < data.size(); ++i)
+            dataImpl.add(new DbTypeImpl(data.get(0)));
+        return dataImpl.toArray(new DbType[0]);
+    }
+}
