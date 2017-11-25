@@ -32,7 +32,7 @@ public class DesktopGUI extends Application {
 
     private Database db = null;
 
-    private final String DB_PATH = "/home/pseudowolf/dev/Projects/KNU/IT/Db/out/db";
+    private final String DB_PATH = "/home/charmer/dev/projects/KNU/IT/Db/out/db";
     public static void main(String[] args) {
         launch(args);
     }
