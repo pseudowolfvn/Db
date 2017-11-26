@@ -141,7 +141,7 @@ public class DatabaseManagerImpl implements DatabaseManager {
     public ColumnHeader getColumn(String dbName, String tableName, String columnName) {
         Database db = Db.Components.DatabaseManager.getDatabase(dbName);
         Table table = db.getTable(tableName);
-        Db.Components.ColumnHeader column = table.getColumn(tableName);
+        Db.Components.ColumnHeader column = table.getColumn(columnName);
         ColumnHeader corbaColumn = new ColumnHeader(
                 column.getType(), column.getName(), column.toString());
         return corbaColumn;
