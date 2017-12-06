@@ -8,9 +8,25 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DatabaseManagerTest {
     @Test
-    public void featuresTest() {
-        String path = "/home/pseudowolf/dev/Projects/KNU/IT/Db/out/db";
-        String name = "junit_test_db";
+    public void createTest() {
+        String path = "/home/charmer/dev/projects/KNU/IT/Db/out/db";
+        String name = "junit_test1_db";
+        if (DatabaseManager.isExists(name))
+            DatabaseManager.deleteDatabase(name);
+        Database db = new Database(path, name);
+        try {
+            db.save();
+        }
+        catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        assertEquals(DatabaseManager.isExists(name), true);
+    }
+
+    @Test
+    public void renameTest() {
+        String path = "/home/charmer/dev/projects/KNU/IT/Db/out/db";
+        String name = "junit_test2_db";
         if (DatabaseManager.isExists(name))
             DatabaseManager.deleteDatabase(name);
         Database db = new Database(path, name);
@@ -28,9 +44,27 @@ class DatabaseManagerTest {
             System.out.println(ex.getMessage());
         }
         assertEquals(DatabaseManager.isExists(renamed), true);
-        DatabaseManager.deleteDatabase(renamed);
-        assertEquals(DatabaseManager.isExists(renamed), false);
-        DatabaseManager.deleteDatabase(name);
+    }
+
+    @Test
+    public void deleteTest() {
+        String path = "/home/charmer/dev/projects/KNU/IT/Db/out/db";
+        String name = "junit_test3_db";
+        if (DatabaseManager.isExists(name))
+            DatabaseManager.deleteDatabase(name);
+        Database db = new Database(path, name);
+        try {
+            db.save();
+        }
+        catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        try {
+            DatabaseManager.deleteDatabase(name);
+        }
+        catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
         assertEquals(DatabaseManager.isExists(name), false);
     }
 }

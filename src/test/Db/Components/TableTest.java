@@ -24,10 +24,10 @@ class TableTest {
             table.printToStdout();
             table.deleteColumn(0);
             table.deleteRow(1);
-                                                                                    table.deleteColumn("Month");
-                                                                                    table.deleteRow(1);
+            table.deleteColumn("Month");
+            table.deleteRow(1);
             table.printToStdout();
-            table.save("/home/pseudowolf/dev/Projects/KNU/IT/Db/out/db/Calendar.dat");
+            table.save("/home/charmer/dev/projects/KNU/IT/Db/out/db/Calendar.dat");
         } catch (IllegalConversionException | UnsupportedTypeException | IOException e) {
             System.out.println(e.getMessage());
         }
@@ -36,8 +36,20 @@ class TableTest {
     @Test
     public void loadTest() {
         try {
-            Table table = Table.load("/home/pseudowolf/dev/Projects/KNU/IT/Db/out/db/Calendar.dat");
+            Table table = Table.load("/home/charmer/dev/projects/KNU/IT/Db/out/db/Calendar.dat");
             table.printToStdout();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void addColumnTest() {
+        try {
+            Table table = Table.load("/home/charmer/dev/projects/KNU/IT/Db/out/db/Calendar.dat");
+            Integer before = table.getColumns().size();
+            table.addColumn("Week", "Int");
+            assertEquals(before - table.getColumns().size(), 1);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
